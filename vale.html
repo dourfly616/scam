@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sonali 💖 Will You Be My Valentine?</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', 'Comic Sans MS', cursive;
+      background: radial-gradient(circle at top, #ffe3e3, #ff9a9e);
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    /* Floating hearts */
+    .heart {
+      position: absolute;
+      bottom: -30px;
+      font-size: 22px;
+      animation: floatUp 6s linear infinite;
+      color: rgba(255, 77, 109, 0.8);
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
+    }
+
+    .container {
+      background: white;
+      width: 90%;
+      max-width: 420px;
+      padding: 40px 30px;
+      border-radius: 24px;
+      margin: auto;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      z-index: 5;
+    }
+
+    h1 {
+      color: #ff4d6d;
+      font-size: 28px;
+    }
+
+    p {
+      font-size: 18px;
+      color: #555;
+      min-height: 48px;
+    }
+
+    .buttons {
+      position: relative;
+      height: 180px;
+      margin-top: 20px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 14px 36px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      position: absolute;
+      user-select: none;
+    }
+
+    #yesBtn {
+      background: linear-gradient(135deg, #ff4d6d, #ff758f);
+      color: white;
+      left: 50%;
+      transform: translateX(-110%);
+      box-shadow: 0 8px 20px rgba(255, 77, 109, 0.5);
+    }
+
+    #noBtn {
+      background: linear-gradient(135deg, #ced4da, #adb5bd);
+      color: #333;
+      left: 50%;
+      transform: translateX(10%);
+    }
+
+    .final {
+      font-size: 22px;
+      color: #ff4d6d;
+      animation: pop 0.6s ease;
+      line-height: 1.5;
+    }
+
+    .final img {
+      width: 200px;
+      max-width: 90%;
+      margin: 16px 0;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.4); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container" id="card">
+  <h1>Sonali, will you be my Valentine? 💘</h1>
+  <p id="message">Choose wisely… the NO button is watching 👀</p>
+
+  <div class="buttons">
+    <button id="yesBtn" onclick="yesClicked()">YES 💖</button>
+    <button id="noBtn" onclick="noClicked()">NO 😢</button>
+  </div>
+</div>
+
+<script>
+  let noCount = 0;
+  let yesScale = 1;
+  let noScale = 1;
+
+  const messages = [
+    "Are you sure? 🥺",
+    "Really sure?? 😳",
+    "Okay… NO is getting confident 😅",
+    "NO has learned teleportation 🚀"
+  ];
+
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+
+  function noClicked() {
+    noCount++;
+
+    document.getElementById("message").innerText =
+      messages[Math.min(noCount, messages.length - 1)];
+
+    // YES always grows
+    yesScale += 0.3;
+    yesBtn.style.transform =
+      `translateX(-110%) scale(${yesScale})`;
+
+    if (noCount <= 3) {
+      // Before powers
+      noScale -= 0.15;
+    } else {
+      // After powers unlock
+      noScale = 1.4;                 // noticeably bigger
+      noBtn.style.pointerEvents = "none";
+      teleportNoButton();
+    }
+
+    noBtn.style.transform =
+      `translateX(10%) scale(${Math.max(noScale, 0.6)})`;
+  }
+
+  function teleportNoButton() {
+    const rect = noBtn.getBoundingClientRect();
+    const padding = 20;
+
+    const maxX = window.innerWidth - rect.width - padding;
+    const maxY = window.innerHeight - rect.height - padding;
+
+    const x = Math.random() * maxX + padding;
+    const y = Math.random() * maxY + padding;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  }
+
+  /* Teleport when mouse comes near (after 3 NOs) */
+  document.addEventListener("mousemove", (e) => {
+    if (noCount >= 3) {
+      const rect = noBtn.getBoundingClientRect();
+      const dx = e.clientX - (rect.left + rect.width / 2);
+      const dy = e.clientY - (rect.top + rect.height / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < 140) {
+        teleportNoButton();
+      }
+    }
+  });
+
+  /* CONFETTI */
+  function launchConfetti() {
+    for (let i = 0; i < 150; i++) {
+      const c = document.createElement("div");
+      c.style.position = "fixed";
+      c.style.width = "8px";
+      c.style.height = "8px";
+      c.style.backgroundColor =
+        ["#ff4d6d", "#ffd166", "#06d6a0", "#118ab2", "#ef476f"]
+        [Math.floor(Math.random() * 5)];
+      c.style.left = Math.random() * window.innerWidth + "px";
+      c.style.top = "-10px";
+      c.style.opacity = Math.random();
+      c.style.transform = `rotate(${Math.random() * 360}deg)`;
+      c.style.zIndex = "9999";
+
+      document.body.appendChild(c);
+
+      const fall = c.animate([
+        { transform: "translateY(0) rotate(0deg)" },
+        { transform: `translateY(${window.innerHeight + 100}px) rotate(720deg)` }
+      ], {
+        duration: Math.random() * 3000 + 2000,
+        easing: "ease-out"
+      });
+
+      fall.onfinish = () => c.remove();
+    }
+  }
+
+  function yesClicked() {
+    launchConfetti();
+    setTimeout(launchConfetti, 900);
+
+    document.getElementById("card").innerHTML = `
+      <div class="final">
+        💕 YAYYYY SONALI 💕<br><br>
+
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHZlYWp5cndyOGJ6bTh6aW9oZ2w0NXh4ZXd0OHl5cTRzOXJkMWx4NCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l0MYt5jPR6QX5pnqM/giphy.gif"
+             alt="cute couple gif">
+
+        You make my ordinary days feel special,<br>
+        and my best days even better 🥰<br><br>
+
+        I don’t need a perfect Valentine’s Day,<br>
+        I just need <strong>you</strong> 💖<br><br>
+
+        <strong>Happy Valentine’s Day, Motuuuuu 🌹</strong><br><br>
+
+        (P.S. The NO button never had a chance 😏)
+      </div>
+    `;
+  }
+
+  /* Floating hearts */
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }, 300);
+</script>
+
+</body>
+</html>
