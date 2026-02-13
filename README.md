@@ -1,2 +1,0 @@
-# scam
-valentine day 
